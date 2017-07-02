@@ -101,7 +101,7 @@ Vue.component('style-checkboxes', {
     }
   },
   methods: {
-    checkedItem: function(styles, action) {
+    checkedItem: function(styles) {
       this.$emit('change', styles);
     },
     shouldBeDisabled: function(value) {
@@ -113,12 +113,107 @@ Vue.component('style-checkboxes', {
   }
 });
 
+Vue.component('customization', {
+  template: `
+  <fieldset>
+    <legend>Customization</legend>
+    <label for="customizable">Is this clothing customizable?</label>
+    <div>
+      <input type="radio" v-model="customizable" required name="customizable" @change="toggleCustomizable" id="customizableYes" :value="true" :checked="customizable" /> <label for="customizableYes">Yes</label>
+    </div>
+    <div>
+      <input type="radio" v-model="customizable" required name="customizable" @change="toggleCustomizable" id="customizableNo" :value="false" :checked="customizable" /> <label for="customizableNo">No</label>
+    </div>
+    <div v-if="customizable">
+      <div v-for="(item, index) in customizableItems">
+        <label :for="'itemNumber'+index">Item ID</label>
+        <input type="text" :name="'itemNumber'+index" :id="'itemNumber'+index" v-model="item.id" @blur="addedCustomizableItem()" placeholder="e.g. 001" />
+      </div>
+      <button type="button" @click="addCustomizableItem">Add another customizable item?</button>
+    </div>
+  </fieldset>
+  `,
+  data: function(){
+    return {
+      customizable: false,
+      customizableItems: [{id:''}]
+    }
+  },
+  methods: {
+    addCustomizableItem: function(value) {
+      this.customizableItems.push({id:''});
+    },
+    addedCustomizableItem: function(customizableItems) {
+      this.$emit('change', this.customizableItems)
+    },
+    toggleCustomizable: function(){
+      this.$emit('toggled', this.customizable);
+    }
+  }
+});
+
+Vue.component('style-ratings', {
+  template: `
+  <fieldset>
+    <legend>Give ratings for selected styles</legend>
+    <div v-if="styles.length < 5">
+      <p>Select 5 styles above.</p>
+    </div>
+    <div v-if="styles.length === 5" v-for="style in styles">
+      <label :for="'rating' + style">{{style}}</label>
+      <input type="text" maxlength="3" :id="'rating' + style" :name="'rating' + style" v-model="styleRatings[style]" @blur="addedRating" v-validate="{ rules: { regex: /^[SSss]{2}|[ABCSabcs]{1,2}$/ }}" />
+      <span v-show="errors.has('rating' + style)">{{ errors.first('rating' + style)}}</span>
+    </div>
+  </fieldset>
+  `,
+  props: ['styles'],
+  data: function(){
+    return {
+      styleRatings: {}
+    }
+  },
+  methods: {
+    addedRating: function(){
+      this.$emit('change', this.styleRatings);
+    }
+  }
+});
+
+Vue.component('tags', {
+  template: `
+  <fieldset class="style-form__checkbox-wrapper">
+    <legend class="style-form__checkbox-title">Select tags</legend>
+    <div v-for="tag in tags" class="style-form__checkbox-container">
+      <input type="checkbox" v-bind:name="tag" @change="addedTag" v-model="selectedTags" :value="tag" v-bind:id="'selectTags' + tag" /> <label v-bind:for="'selectTags' + tag">{{tag}}</label>
+    </div>
+  </fieldset>
+  `,
+  props: ['tags'],
+  data: function(){
+    return {
+      selectedTags: []
+    }
+  },
+  methods: {
+    addedTag: function(){
+      this.$emit('change', this.selectedTags);
+    }
+  }
+});
+
 var app = new Vue({
   el: '#nikki',
   data: {
     nikkiData: nikkiData.state,
     clothingFormData: {
-      clothingStyles: []
+      id: '',
+      name: '',
+      hearts: 0,
+      clothingStyles: [],
+      ratings: {},
+      tags: [],
+      customizable: false,
+      customizableItems: []
     }
   },
   computed: {
@@ -127,11 +222,40 @@ var app = new Vue({
     },
     orderedTags: function(){
       return this.nikkiData.tags.sort()
+    },
+    reformatObject: function(){
+      var data = this.clothingFormData;
+      var dataID = data.id;
+      var dataObject = {};
+      dataObject[dataID] = {
+        name: data.name,
+        hearts: data.hearts,
+        style: data.ratings,
+        tags: data.tags,
+        customizable: data.customizable,
+        otherStyles: data.customizableItems
+      };
+      return dataObject;
+    },
+    jsonData: function(){
+      return JSON.stringify(this.reformatObject, null, 2)
     }
   },
   methods: {
     updateStyleArray: function(value) {
       this.clothingFormData.clothingStyles = value;
+    },
+    updateCustomItems: function(items) {
+      this.clothingFormData.customizableItems = items;
+    },
+    updateRatings: function(ratings) {
+      this.clothingFormData.ratings = ratings;
+    },
+    updateTags: function(tags) {
+      this.clothingFormData.tags = tags;
+    },
+    updateCustomizable: function(customizable) {
+      this.clothingFormData.customizable = customizable;
     }
   }
 });
