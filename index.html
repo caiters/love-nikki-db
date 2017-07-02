@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Nikki Data</title>
+    <link rel="stylesheet" href="css/nikki.css" />
+  </head>
+  <body>
+    <main id="nikki" v-on:clothingStylesChanged="updateStyleArray(value, action)">
+      <ul>
+        <li v-for="style in orderedStyles">
+          {{style}}
+        </li>
+      </ul>
+
+      <form>
+        <h1>Add New Clothing</h1>
+        <div>
+          <label for="clothingID">Clothing ID #</label>
+          <input required type="text" v-model="clothingFormData.id" placeholder="e.g. 001" />
+        </div>
+        <div>
+          <label for="name">Name</label>
+          <input required type="text" v-model="clothingFormData.name" placeholder="e.g. Nikki's Pinky" />
+        </div>
+        <div>
+          <label for="hearts">Hearts</label>
+          <div>
+            <div>
+              <label for="hearts1">1</label>
+              <input type="radio" name="hearts" v-model="clothingFormData.hearts" id="hearts1" value="1" />
+            </div>
+            <div>
+              <label for="hearts2">2</label>
+              <input type="radio" name="hearts" v-model="clothingFormData.hearts" id="hearts2" value="2" />
+            </div>
+            <div>
+              <label for="hearts3">3</label>
+              <input type="radio" name="hearts" v-model="clothingFormData.hearts" id="hearts3" value="3" />
+            </div>
+            <div>
+              <label for="hearts4">4</label>
+              <input type="radio" name="hearts" v-model="clothingFormData.hearts" id="hearts4" value="4" />
+            </div>
+            <div>
+              <label for="hearts5">5</label>
+              <input type="radio" name="hearts" v-model="clothingFormData.hearts" id="hearts5" value="5" />
+            </div>
+            <div>
+              <label for="hearts6">6</label>
+              <input type="radio" name="hearts" v-model="clothingFormData.hearts" id="hearts6" value="6" />
+            </div>
+          </div>
+        </div>
+          <style-checkboxes :styles="orderedStyles" @change="updateStyleArray"></style-checkboxes>
+        <fieldset>
+          <legend>Give ratings for selected styles</legend>
+          <div v-if="clothingFormData.clothingStyles.length < 5">
+            <p>Select 5 styles above.</p>
+          </div>
+          <div v-if="clothingFormData.clothingStyles.length === 5" v-for="style in clothingFormData.clothingStyles">
+            <label :for="'rating' + style">{{style}}</label>
+            <input type="text" maxlength="3" :id="'rating' + style" :name="'rating' + style" v-validate="{ rules: { regex: /^[SSss]{2}|[ABCSabcs]{1,2}$/ }}" />
+            <span v-show="errors.has('rating' + style)">{{ errors.first('rating' + style)}}</span>
+          </div>
+        </fieldset>
+        <fieldset class="style-form__checkbox-wrapper">
+          <legend class="style-form__checkbox-title">Select tags</legend>
+          <div v-for="tag in orderedTags" class="style-form__checkbox-container">
+            <input type="checkbox" v-bind:name="tag" v-bind:id="'selectTags' + tag" /> <label v-bind:for="'selectTags' + tag">{{tag}}</label>
+          </div>
+        </fieldset>
+        <div>
+          <label for="customizable">Is this clothing customizable?</label>
+          <div>
+            <input type="radio" required name="customizable" id="customizableYes" /> <label for="customizableYes">Yes</label>
+          </div>
+          <div>
+            <input type="radio" required name="customizable" id="customizableNo" /> <label for="customizableNo">No</label>
+          </div>
+        </div>
+      </form>
+    </main>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vuex"></script>
+    <script src="scripts/vee-validate.min.js"></script>
+    <script src="scripts/nikki-data.js"></script>
+  </body>
+</html>
