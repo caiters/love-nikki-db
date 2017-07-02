@@ -223,6 +223,9 @@ var app = new Vue({
     orderedTags: function(){
       return this.nikkiData.tags.sort()
     },
+    fullHearts: function() {
+      return this.clothingFormData.hearts >= 6
+    },
     reformatObject: function(){
       var data = this.clothingFormData;
       var dataID = data.id;
@@ -244,6 +247,9 @@ var app = new Vue({
   methods: {
     updateStyleArray: function(value) {
       this.clothingFormData.clothingStyles = value;
+    },
+    selectedHeartsClass: function(num) {
+      return this.clothingFormData.hearts >=num ? 'form-group__heart--selected form-group__heart' : 'form-group__heart';
     },
     updateCustomItems: function(items) {
       this.clothingFormData.customizableItems = items;
