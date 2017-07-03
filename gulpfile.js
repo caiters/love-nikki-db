@@ -14,6 +14,7 @@ var paths = {
   cssDest: 'css/',
   jsDest: 'scripts/',
   js: 'src/js/*',
+  jsParts: 'src/js/*/**',
   jsVendor: 'src/js/vendor/*'
 };
 
@@ -37,7 +38,7 @@ gulp.task('css', function(){
 });
 
 gulp.task('scripts', function(){
-  gulp.src([paths.jsVendor, paths.js])
+  gulp.src([paths.jsVendor, paths.jsParts, paths.js])
     .pipe(concat('all.js'))
     .pipe(gulp.dest(paths.jsDest))
     .pipe(connect.reload())
@@ -48,7 +49,7 @@ gulp.task('watch:css', ['css'], function(){
 });
 
 gulp.task('watch:scripts', ['scripts'], function(){
-  gulp.watch([paths.js, paths.jsVendor], ['scripts']);
+  gulp.watch([paths.js, paths.jsParts, paths.jsVendor], ['scripts']);
 });
 
 gulp.task('default', ['connect', 'css', 'scripts', 'watch:css', 'watch:scripts']);
