@@ -33,6 +33,7 @@ var app = new Vue({
       dataObject[dataID] = {
         name: data.name,
         hearts: data.hearts,
+        category: data.category,
         style: data.ratings,
         tags: data.tags,
         customizable: data.customizable,
@@ -62,6 +63,9 @@ var app = new Vue({
     },
     updateCustomizable: function(customizable) {
       this.clothingFormData.customizable = customizable;
+    },
+    updateCategory: function(category) {
+      this.clothingFormData.category = category;
     }
   }
 });

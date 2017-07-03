@@ -31,12 +31,18 @@ Vue.component('category-select', {
   template: `
   <div class="form-group">
     <label class="form-group__label" for="category">Category</label>
-    <select id="category">
+    <select id="category" @change="categoryChosen" v-model="chosenCategory">
+      <option></option>
       <category v-for="category in arrayOfCategories" :item="category"></category>
     </select>
   </div>
   `,
   props: ['categories'],
+  data: function(){
+    return {
+      chosenCategory: ''
+    }
+  },
   computed: {
     arrayOfCategories: function(){
       var categories = this.categories;
@@ -46,8 +52,8 @@ Vue.component('category-select', {
     }
   },
   methods: {
-    addedTag: function(){
-      this.$emit('change', this.selectedTags);
+    categoryChosen: function(){
+      this.$emit('change', this.chosenCategory);
     }
   }
 });
@@ -457,6 +463,7 @@ var app = new Vue({
       dataObject[dataID] = {
         name: data.name,
         hearts: data.hearts,
+        category: data.category,
         style: data.ratings,
         tags: data.tags,
         customizable: data.customizable,
@@ -486,6 +493,9 @@ var app = new Vue({
     },
     updateCustomizable: function(customizable) {
       this.clothingFormData.customizable = customizable;
+    },
+    updateCategory: function(category) {
+      this.clothingFormData.category = category;
     }
   }
 });
