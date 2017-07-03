@@ -433,6 +433,7 @@ Vue.use(VeeValidate);
 var app = new Vue({
   el: '#nikki',
   data: {
+    finished: false,
     nikkiData: nikkiData.state,
     clothingFormData: {
       id: '',
@@ -496,6 +497,10 @@ var app = new Vue({
     },
     updateCategory: function(category) {
       this.clothingFormData.category = category;
+    },
+    displayJSON: function(e){
+      e.preventDefault();
+      this.finished = true;
     }
   }
 });

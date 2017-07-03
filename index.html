@@ -50,8 +50,11 @@
         <style-ratings :styles="clothingFormData.clothingStyles" @change="updateRatings"></style-ratings>
         <tags :tags="orderedTags" @change="updateTags"></tags>
         <customization @change="updateCustomItems" @toggled="updateCustomizable"></customization>
+        <button type="button" @click="displayJSON($event)">Finished!</button>
       </form>
-      <pre>{{jsonData}}</pre>
+      <div v-if="finished">
+        <pre contenteditable class="json-copy">{{jsonData}}</pre>
+      </div>
     </main>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vuex"></script>
