@@ -1,4 +1,4 @@
-Vue.component('customization', {
+Vue.component("customization", {
   template: `
   <fieldset>
     <legend>Customization</legend>
@@ -18,21 +18,21 @@ Vue.component('customization', {
     </div>
   </fieldset>
   `,
-  data: function(){
+  data: function() {
     return {
       customizable: false,
-      customizableItems: [{id:''}]
-    }
+      customizableItems: [{ id: "" }]
+    };
   },
   methods: {
     addCustomizableItem: function(value) {
-      this.customizableItems.push({id:''});
+      this.customizableItems.push({ id: "" });
     },
     addedCustomizableItem: function(customizableItems) {
-      this.$emit('change', this.customizableItems)
+      this.$emit("change", this.customizableItems);
     },
-    toggleCustomizable: function(){
-      this.$emit('toggled', this.customizable);
+    toggleCustomizable: function() {
+      this.$emit("toggled", this.customizable);
     }
   }
 });

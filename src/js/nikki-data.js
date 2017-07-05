@@ -1,14 +1,13 @@
 Vue.use(VeeValidate);
 
 var app = new Vue({
-  el: '#nikki',
+  el: "#nikki",
   data: {
     finished: false,
-    nikkiData: nikkiData.state,
     clothingFormData: {
-      id: '',
-      category: '',
-      name: '',
+      id: "",
+      category: "",
+      name: "",
       hearts: 0,
       clothingStyles: [],
       ratings: {},
@@ -17,33 +16,34 @@ var app = new Vue({
       customizableItems: []
     }
   },
+  mounted: function() {
+    store.dispatch("load");
+  },
   computed: {
-    orderedStyles: function() {
-      return this.nikkiData.styles.sort()
+    categories: function() {
+      return store.state.categories;
     },
-    orderedTags: function(){
-      return this.nikkiData.tags.sort()
+    orderedStyles: function() {
+      return store.state.styles.sort();
+    },
+    orderedTags: function() {
+      return store.state.tags.sort();
     },
     fullHearts: function() {
-      return this.clothingFormData.hearts >= 6
+      return this.clothingFormData.hearts >= 6;
     },
-    reformatObject: function(){
+    reformatObject: function() {
       var data = this.clothingFormData;
-      var dataID = data.id;
-      var dataObject = {};
-      dataObject[dataID] = {
+      return {
+        id: data.id,
         name: data.name,
         hearts: data.hearts,
         category: data.category,
         style: data.ratings,
         tags: data.tags,
         customizable: data.customizable,
-        otherStyles: data.customizableItems
+        customizations: _.map(data.customizableItems, "id")
       };
-      return dataObject;
-    },
-    jsonData: function(){
-      return JSON.stringify(this.reformatObject, null, 2)
     }
   },
   methods: {
@@ -51,7 +51,9 @@ var app = new Vue({
       this.clothingFormData.clothingStyles = value;
     },
     selectedHeartsClass: function(num) {
-      return this.clothingFormData.hearts >=num ? 'form-group__heart--selected form-group__heart' : 'form-group__heart';
+      return this.clothingFormData.hearts >= num
+        ? "form-group__heart--selected form-group__heart"
+        : "form-group__heart";
     },
     updateCustomItems: function(items) {
       this.clothingFormData.customizableItems = items;
@@ -68,9 +70,27 @@ var app = new Vue({
     updateCategory: function(category) {
       this.clothingFormData.category = category;
     },
-    displayJSON: function(e){
+    submitClothing: function(e) {
       e.preventDefault();
-      this.finished = true;
+      store.dispatch("addClothingItem", this.reformatObject);
+      var emptyData = {
+        id: "",
+        category: "",
+        name: "",
+        hearts: 0,
+        clothingStyles: [],
+        ratings: {},
+        tags: [],
+        customizable: false,
+        customizableItems: []
+      };
+      this.clothingFormData = emptyData;
+      this.updateCustomItems(emptyData.customizableItems);
+      this.updateRatings(emptyData.ratings);
+      this.updateTags(emptyData.tags);
+      this.updateCustomizable(emptyData.customizable);
+      this.updateCategory(emptyData.category);
+      this.updateStyleArray(emptyData.clothingStyles);
     }
   }
 });

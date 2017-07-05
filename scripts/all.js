@@ -8,26 +8,30 @@ Vue.component('category', {
 
 function loopOverCategories(categories, newCategories, prefix) {
   for (var key in categories) {
-    if(categories.hasOwnProperty(key)){
+    if (categories.hasOwnProperty(key)) {
       parseCategories(categories[key], newCategories, prefix);
     }
   }
   return newCategories;
 }
 
-function parseCategories(category, newCategories, prefix){
+function parseCategories(category, newCategories, prefix) {
   var categoryToAdd = {
     name: prefix + category.name,
     type: category.type
   };
   newCategories.push(categoryToAdd);
-  if(category.children) {
-    loopOverCategories(category.children, newCategories, prefix + '&nbsp;&nbsp;&nbsp;');
+  if (category.children) {
+    loopOverCategories(
+      category.children,
+      newCategories,
+      prefix + "&nbsp;&nbsp;&nbsp;"
+    );
   }
   return newCategories;
 }
 
-Vue.component('category-select', {
+Vue.component("category-select", {
   template: `
   <div class="form-group">
     <label class="form-group__label" for="category">Category</label>
@@ -37,23 +41,23 @@ Vue.component('category-select', {
     </select>
   </div>
   `,
-  props: ['categories'],
-  data: function(){
+  props: ["categories", "currentCategory"],
+  data: function() {
     return {
-      chosenCategory: ''
-    }
+      chosenCategory: this.currentCategory
+    };
   },
   computed: {
-    arrayOfCategories: function(){
+    arrayOfCategories: function() {
       var categories = this.categories;
       var newCategories = [];
-      loopOverCategories(categories, newCategories, '');
+      loopOverCategories(categories, newCategories, "");
       return newCategories;
     }
   },
   methods: {
-    categoryChosen: function(){
-      this.$emit('change', this.chosenCategory);
+    categoryChosen: function() {
+      this.$emit("change", this.chosenCategory);
     }
   }
 });
@@ -65,7 +69,7 @@ Vue.component('container', {
   props: ['item']
 });
 
-Vue.component('customization', {
+Vue.component("customization", {
   template: `
   <fieldset>
     <legend>Customization</legend>
@@ -85,26 +89,26 @@ Vue.component('customization', {
     </div>
   </fieldset>
   `,
-  data: function(){
+  data: function() {
     return {
       customizable: false,
-      customizableItems: [{id:''}]
-    }
+      customizableItems: [{ id: "" }]
+    };
   },
   methods: {
     addCustomizableItem: function(value) {
-      this.customizableItems.push({id:''});
+      this.customizableItems.push({ id: "" });
     },
     addedCustomizableItem: function(customizableItems) {
-      this.$emit('change', this.customizableItems)
+      this.$emit("change", this.customizableItems);
     },
-    toggleCustomizable: function(){
-      this.$emit('toggled', this.customizable);
+    toggleCustomizable: function() {
+      this.$emit("toggled", this.customizable);
     }
   }
 });
 
-Vue.component('style-checkboxes', {
+Vue.component("style-checkboxes", {
   template: `
   <fieldset class="style-form__checkbox-wrapper">
     <legend class="style-form__checkbox-title">Select styles</legend>
@@ -114,18 +118,18 @@ Vue.component('style-checkboxes', {
     </div>
   </fieldset>
   `,
-  props: ['styles'],
+  props: ["styles", "currentStyles"],
   data: function() {
     return {
-      selectedStyles: []
-    }
+      selectedStyles: this.currentStyles
+    };
   },
   methods: {
     checkedItem: function(styles) {
-      this.$emit('change', styles);
+      this.$emit("change", styles);
     },
     shouldBeDisabled: function(value) {
-      if(this.selectedStyles.indexOf(value) > -1){
+      if (this.selectedStyles.indexOf(value) > -1) {
         return false;
       }
       return this.selectedStyles.length >= 5;
@@ -137,13 +141,13 @@ var customValidationMsgs = {
   en: {
     custom: {
       ratingMature: {
-        regex: 'Please give a letter grade - SS, S, A, B, or C'
+        regex: "Please give a letter grade - SS, S, A, B, or C"
       }
     }
   }
 };
 
-Vue.component('style-ratings', {
+Vue.component("style-ratings", {
   template: `
   <fieldset>
     <legend>Give ratings for selected styles</legend>
@@ -157,20 +161,20 @@ Vue.component('style-ratings', {
     </div>
   </fieldset>
   `,
-  props: ['styles'],
-  data: function(){
+  props: ["styles", "currentRatings"],
+  data: function() {
     return {
-      styleRatings: {}
-    }
+      styleRatings: this.currentRatings
+    };
   },
   methods: {
-    addedRating: function(){
-      this.$emit('change', this.styleRatings);
+    addedRating: function() {
+      this.$emit("change", this.styleRatings);
     }
   }
 });
 
-Vue.component('tags', {
+Vue.component("tags", {
   template: `
   <fieldset class="style-form__checkbox-wrapper">
     <legend class="style-form__checkbox-title">Select tags</legend>
@@ -179,251 +183,140 @@ Vue.component('tags', {
     </div>
   </fieldset>
   `,
-  props: ['tags'],
-  data: function(){
+  props: ["tags", "currentTags"],
+  data: function() {
     return {
-      selectedTags: []
-    }
+      selectedTags: this.currentTags
+    };
   },
   methods: {
-    addedTag: function(){
-      this.$emit('change', this.selectedTags);
+    addedTag: function() {
+      this.$emit("change", this.selectedTags);
     }
   }
 });
 
-var nikkiData = new Vuex.Store({
+var store = new Vuex.Store({
   state: {
-    styles: ['Gorgeous', 'Simple', 'Elegance', 'Lively', 'Mature', 'Cute', 'Sexy', 'Pure', 'Warm', 'Cool'],
-    tags: ['Sun Care', 'Dancer', 'Floral', 'Winter', 'Britain', 'Swimsuit', 'Shower', 'Kimono', 'Pajamas', 'Wedding', 'Army', 'Office', 'Apron', 'Cheongsam', 'Maiden', 'Evening Gown', 'Navy', 'Traditional', 'Bunny', 'Lady', 'Lolita', 'Gothic', 'Sports', 'Harajuku', 'Preppy', 'Unisex', 'Future', 'Fairy', 'Rock', 'Denim', 'Pet', 'Goddess', 'POP', 'Homewear', 'Chinese Classical', 'Hindu', 'Republic of China', 'European', 'Swordsman', 'Rain', 'Modern China', 'Dryad', 'Bohemia', 'Paramedics'],
-    categories: [
-      {
-        name: 'Hair',
-        type: 'category'
-      },
-      {
-        name: 'Dress',
-        type: 'category'
-      },
-      {
-        name: 'Coat',
-        type: 'category'
-      },
-      {
-        name: 'Tops',
-        type: 'category'
-      },
-      {
-        name: 'Bottoms',
-        type: 'category'
-      },
-      {
-        name: 'Hosiery',
-        type: 'category'
-      },
-      {
-        name: 'Shoes',
-        type: 'category'
-      },
-      {
-        name: 'Accessory',
-        type: 'container',
-        children: [
-          {
-            name: 'Headwear',
-            type: 'container',
-            children: [
-              {
-                name: 'Hair ornaments',
-                type: 'category'
-              },
-              {
-                name: 'Veil',
-                type: 'category'
-              },
-              {
-                name: 'Hairpin',
-                type: 'category'
-              },
-              {
-                name: 'Ear',
-                type: 'category'
-              }
-            ]
-          },
-          {
-            name: 'Earrings',
-            type: 'category'
-          },
-          {
-            name: 'Necklace',
-            type: 'container',
-            children: [
-              {
-                name: 'Scarf',
-                type: 'category'
-              },
-              {
-                name: 'Necklace',
-                type: 'category'
-              }
-            ]
-          },
-          {
-            name: 'Bracelet',
-            type: 'container',
-            children: [
-              {
-                name: 'Right hand ornaments',
-                type: 'category'
-              },
-              {
-                name: 'Left hand ornaments',
-                type: 'category'
-              },
-              {
-                name: 'Glove',
-                type: 'category'
-              }
-            ]
-          },
-          {
-            name: 'Handheld',
-            type: 'container',
-            children: [
-              {
-                name: 'Right hand holding',
-                type: 'category'
-              },
-              {
-                name: 'Left hand holding',
-                type: 'category'
-              },
-              {
-                name: 'Both hand holding',
-                type: 'category'
-              }
-            ]
-          },
-          {
-            name: 'Waist',
-            type: 'category'
-          },
-          {
-            name: 'Special',
-            type: 'container',
-            children: [
-              {
-                name: 'Face',
-                type: 'category'
-              },
-              {
-                name: 'Brooch',
-                type: 'category'
-              },
-              {
-                name: 'Tattoo',
-                type: 'category'
-              },
-              {
-                name: 'Wing',
-                type: 'category'
-              },
-              {
-                name: 'Tail',
-                type: 'category'
-              },
-              {
-                name: 'Foreground',
-                type: 'category'
-              },
-              {
-                name: 'Background',
-                type: 'category'
-              },
-              {
-                name: 'Head ornaments',
-                type: 'category'
-              },
-              {
-                name: 'Ground',
-                type: 'category'
-              },
-              {
-                name: 'Skin',
-                type: 'category'
-              }
-            ]
-          }
-        ]
-      }
+    styles: [
+      "Gorgeous",
+      "Simple",
+      "Elegance",
+      "Lively",
+      "Mature",
+      "Cute",
+      "Sexy",
+      "Pure",
+      "Warm",
+      "Cool"
     ],
-    clothing: {
-      '001': {
-        name: 'Nikki\'s Pinky',
-        hearts: 2,
-        style: {
-          simple: 's',
-          pure: 'a',
-          lively: 'a',
-          warm: 'a',
-          cute: 'a'
-        },
-        id: '001',
-        tags: [],
-        customizable: false,
-        otherStyles: false
-      },
-      '004': {
-        name: 'Sporty Teenager',
-        hearts: 3,
-        style: {
-          simple: 's',
-          pure: 's',
-          lively: 'a',
-          cool: 'a',
-          cute: 'a'
-        },
-        id: '004',
-        tags: ['Unisex'],
-        customizable: true,
-        otherStyles: []
-      },
-      '007': {
-        name: 'Elegant Nobleman',
-        hearts: 2,
-        style: {
-          simple: 'b',
-          pure: 'b',
-          lively: 'a',
-          cool: 's',
-          cute: 's'
-        },
-        id: '007',
-        tags: ['Unisex'],
-        customizable: true,
-        otherStyles: []
-      },
-      '010': {
-        name: 'Perfect Senior',
-        hearts: 2,
-        style: {
-          simple: 's',
-          pure: 'a',
-          lively: 'b',
-          cool: 'a',
-          cute: 'a'
-        },
-        id: '010',
-        tags: ['Unisex'],
-        customizable: true,
-        otherStyles: []
-      }
-    }
+    tags: [
+      "Sun Care",
+      "Dancer",
+      "Floral",
+      "Winter",
+      "Britain",
+      "Swimsuit",
+      "Shower",
+      "Kimono",
+      "Pajamas",
+      "Wedding",
+      "Army",
+      "Office",
+      "Apron",
+      "Cheongsam",
+      "Maiden",
+      "Evening Gown",
+      "Navy",
+      "Traditional",
+      "Bunny",
+      "Lady",
+      "Lolita",
+      "Gothic",
+      "Sports",
+      "Harajuku",
+      "Preppy",
+      "Unisex",
+      "Future",
+      "Fairy",
+      "Rock",
+      "Denim",
+      "Pet",
+      "Goddess",
+      "POP",
+      "Homewear",
+      "Chinese Classical",
+      "Hindu",
+      "Republic of China",
+      "European",
+      "Swordsman",
+      "Rain",
+      "Modern China",
+      "Dryad",
+      "Bohemia",
+      "Paramedics"
+    ],
+    categories: [],
+    clothes: {},
+    loading: false
   },
   mutations: {
-    add: function(state, newItems){
-      Object.assign(state, newItems)
+    add: function(state, newItems) {
+      return Object.assign(state, newItems);
+    },
+    loading: function(state) {
+      return Object.assign(state, { loading: true });
+    },
+    doneLoading: function(state) {
+      return Object.assign(state, { loading: false });
+    },
+    setCategories: function(state, categories) {
+      return Object.assign(state, { categories: categories });
+    },
+    setClothes: function(state, clothes) {
+      return Object.assign(state, { clothes: clothes });
+    },
+    updateClothes: function(state, clothingItem) {
+      state.clothes[clothingItem.id] = Object.assign({}, clothingItem);
+      return state;
+    }
+  },
+  actions: {
+    load: function(context) {
+      context.commit("loading");
+      let categories = fetch("http://localhost:3000/categories")
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(categories) {
+          context.commit("setCategories", categories);
+        });
+      let clothes = fetch("http://localhost:3000/clothes")
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(clothes) {
+          context.commit("setClothes", clothes);
+        });
+      return Promise.all([categories, clothes]).then(function() {
+        context.commit("doneLoading");
+      });
+    },
+    addClothingItem: function(context, clothingItem) {
+      context.commit("loading");
+      console.log(clothingItem);
+      console.log(clothingItem.id);
+      return fetch("http://localhost:3000/clothes/" + clothingItem.id, {
+        method: "put",
+        headers: new Headers({ "Content-Type": "application/JSON" }),
+        body: JSON.stringify(clothingItem)
+      })
+        .then(function() {
+          return context.commit("updateClothes", clothingItem);
+        })
+        .then(function() {
+          return context.commit("doneLoading");
+        });
     }
   }
 });
@@ -431,14 +324,13 @@ var nikkiData = new Vuex.Store({
 Vue.use(VeeValidate);
 
 var app = new Vue({
-  el: '#nikki',
+  el: "#nikki",
   data: {
     finished: false,
-    nikkiData: nikkiData.state,
     clothingFormData: {
-      id: '',
-      category: '',
-      name: '',
+      id: "",
+      category: "",
+      name: "",
       hearts: 0,
       clothingStyles: [],
       ratings: {},
@@ -447,33 +339,34 @@ var app = new Vue({
       customizableItems: []
     }
   },
+  mounted: function() {
+    store.dispatch("load");
+  },
   computed: {
-    orderedStyles: function() {
-      return this.nikkiData.styles.sort()
+    categories: function() {
+      return store.state.categories;
     },
-    orderedTags: function(){
-      return this.nikkiData.tags.sort()
+    orderedStyles: function() {
+      return store.state.styles.sort();
+    },
+    orderedTags: function() {
+      return store.state.tags.sort();
     },
     fullHearts: function() {
-      return this.clothingFormData.hearts >= 6
+      return this.clothingFormData.hearts >= 6;
     },
-    reformatObject: function(){
+    reformatObject: function() {
       var data = this.clothingFormData;
-      var dataID = data.id;
-      var dataObject = {};
-      dataObject[dataID] = {
+      return {
+        id: data.id,
         name: data.name,
         hearts: data.hearts,
         category: data.category,
         style: data.ratings,
         tags: data.tags,
         customizable: data.customizable,
-        otherStyles: data.customizableItems
+        customizations: _.map(data.customizableItems, "id")
       };
-      return dataObject;
-    },
-    jsonData: function(){
-      return JSON.stringify(this.reformatObject, null, 2)
     }
   },
   methods: {
@@ -481,7 +374,9 @@ var app = new Vue({
       this.clothingFormData.clothingStyles = value;
     },
     selectedHeartsClass: function(num) {
-      return this.clothingFormData.hearts >=num ? 'form-group__heart--selected form-group__heart' : 'form-group__heart';
+      return this.clothingFormData.hearts >= num
+        ? "form-group__heart--selected form-group__heart"
+        : "form-group__heart";
     },
     updateCustomItems: function(items) {
       this.clothingFormData.customizableItems = items;
@@ -498,9 +393,27 @@ var app = new Vue({
     updateCategory: function(category) {
       this.clothingFormData.category = category;
     },
-    displayJSON: function(e){
+    submitClothing: function(e) {
       e.preventDefault();
-      this.finished = true;
+      store.dispatch("addClothingItem", this.reformatObject);
+      var emptyData = {
+        id: "",
+        category: "",
+        name: "",
+        hearts: 0,
+        clothingStyles: [],
+        ratings: {},
+        tags: [],
+        customizable: false,
+        customizableItems: []
+      };
+      this.clothingFormData = emptyData;
+      this.updateCustomItems(emptyData.customizableItems);
+      this.updateRatings(emptyData.ratings);
+      this.updateTags(emptyData.tags);
+      this.updateCustomizable(emptyData.customizable);
+      this.updateCategory(emptyData.category);
+      this.updateStyleArray(emptyData.clothingStyles);
     }
   }
 });

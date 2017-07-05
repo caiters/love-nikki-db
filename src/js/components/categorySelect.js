@@ -1,25 +1,29 @@
 function loopOverCategories(categories, newCategories, prefix) {
   for (var key in categories) {
-    if(categories.hasOwnProperty(key)){
+    if (categories.hasOwnProperty(key)) {
       parseCategories(categories[key], newCategories, prefix);
     }
   }
   return newCategories;
 }
 
-function parseCategories(category, newCategories, prefix){
+function parseCategories(category, newCategories, prefix) {
   var categoryToAdd = {
     name: prefix + category.name,
     type: category.type
   };
   newCategories.push(categoryToAdd);
-  if(category.children) {
-    loopOverCategories(category.children, newCategories, prefix + '&nbsp;&nbsp;&nbsp;');
+  if (category.children) {
+    loopOverCategories(
+      category.children,
+      newCategories,
+      prefix + "&nbsp;&nbsp;&nbsp;"
+    );
   }
   return newCategories;
 }
 
-Vue.component('category-select', {
+Vue.component("category-select", {
   template: `
   <div class="form-group">
     <label class="form-group__label" for="category">Category</label>
@@ -29,23 +33,23 @@ Vue.component('category-select', {
     </select>
   </div>
   `,
-  props: ['categories'],
-  data: function(){
+  props: ["categories", "currentCategory"],
+  data: function() {
     return {
-      chosenCategory: ''
-    }
+      chosenCategory: this.currentCategory
+    };
   },
   computed: {
-    arrayOfCategories: function(){
+    arrayOfCategories: function() {
       var categories = this.categories;
       var newCategories = [];
-      loopOverCategories(categories, newCategories, '');
+      loopOverCategories(categories, newCategories, "");
       return newCategories;
     }
   },
   methods: {
-    categoryChosen: function(){
-      this.$emit('change', this.chosenCategory);
+    categoryChosen: function() {
+      this.$emit("change", this.chosenCategory);
     }
   }
 });

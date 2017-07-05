@@ -1,4 +1,4 @@
-Vue.component('tags', {
+Vue.component("tags", {
   template: `
   <fieldset class="style-form__checkbox-wrapper">
     <legend class="style-form__checkbox-title">Select tags</legend>
@@ -7,15 +7,15 @@ Vue.component('tags', {
     </div>
   </fieldset>
   `,
-  props: ['tags'],
-  data: function(){
+  props: ["tags", "currentTags"],
+  data: function() {
     return {
-      selectedTags: []
-    }
+      selectedTags: this.currentTags
+    };
   },
   methods: {
-    addedTag: function(){
-      this.$emit('change', this.selectedTags);
+    addedTag: function() {
+      this.$emit("change", this.selectedTags);
     }
   }
 });

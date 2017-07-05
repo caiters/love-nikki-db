@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/caiters/love-nikki-db#readme",
   "dependencies": {
+    "cors": "^2.8.3",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-concat": "^2.6.1",

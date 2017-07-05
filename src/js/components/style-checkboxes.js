@@ -1,4 +1,4 @@
-Vue.component('style-checkboxes', {
+Vue.component("style-checkboxes", {
   template: `
   <fieldset class="style-form__checkbox-wrapper">
     <legend class="style-form__checkbox-title">Select styles</legend>
@@ -8,18 +8,18 @@ Vue.component('style-checkboxes', {
     </div>
   </fieldset>
   `,
-  props: ['styles'],
+  props: ["styles", "currentStyles"],
   data: function() {
     return {
-      selectedStyles: []
-    }
+      selectedStyles: this.currentStyles
+    };
   },
   methods: {
     checkedItem: function(styles) {
-      this.$emit('change', styles);
+      this.$emit("change", styles);
     },
     shouldBeDisabled: function(value) {
-      if(this.selectedStyles.indexOf(value) > -1){
+      if (this.selectedStyles.indexOf(value) > -1) {
         return false;
       }
       return this.selectedStyles.length >= 5;

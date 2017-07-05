@@ -2,13 +2,13 @@ var customValidationMsgs = {
   en: {
     custom: {
       ratingMature: {
-        regex: 'Please give a letter grade - SS, S, A, B, or C'
+        regex: "Please give a letter grade - SS, S, A, B, or C"
       }
     }
   }
 };
 
-Vue.component('style-ratings', {
+Vue.component("style-ratings", {
   template: `
   <fieldset>
     <legend>Give ratings for selected styles</legend>
@@ -22,15 +22,15 @@ Vue.component('style-ratings', {
     </div>
   </fieldset>
   `,
-  props: ['styles'],
-  data: function(){
+  props: ["styles", "currentRatings"],
+  data: function() {
     return {
-      styleRatings: {}
-    }
+      styleRatings: this.currentRatings
+    };
   },
   methods: {
-    addedRating: function(){
-      this.$emit('change', this.styleRatings);
+    addedRating: function() {
+      this.$emit("change", this.styleRatings);
     }
   }
 });
